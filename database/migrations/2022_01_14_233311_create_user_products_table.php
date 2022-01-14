@@ -22,7 +22,12 @@ class CreateUserProductsTable extends Migration
             $table->string('manufacturer'); // also this should be a table
             $table->string('distributor');
             $table->double('quantity')->nullable(false);
-            $table->double('unitCost')->nullable(false);
+            $table->double('unit_cost')->nullable(false);
+            $table->bigIncrements('user_id'); //owner
+
+            $table->foreign('user_id')->on('users')
+                ->references('id')->onDelete('CASCADE');
+
             $table->timestamps();
         });
     }
