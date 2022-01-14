@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  app:
+    image: mimidots/php7.4:1.0.0-alpine
+    volumes:
+      - $PWD:/var/www/html
+    restart: on-failure
+    ports:
+      - "9000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - iprocure
+
+networks:
+  iprocure:
+    name: ecommerce_api
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.0.10.0/29
