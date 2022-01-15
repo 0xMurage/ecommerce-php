@@ -14,15 +14,15 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            https://laravel.com/docs/8.x/migrations#column-method-foreignId            $table->id();
-            $table->string('name')->nullable(false);
+            $table->id();
+            $table->string('name');
             $table->text('description');
             $table->string('type');
             $table->string('category'); //we could refactor to its individual table?
             $table->string('manufacturer'); // also this should be a table
             $table->string('distributor');
-            $table->double('quantity')->nullable(false);
-            $table->double('unit_cost')->nullable(false);
+            $table->double('quantity');
+            $table->double('unit_cost');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');; //owner
 
             $table->timestamps();
