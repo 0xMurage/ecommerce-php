@@ -15,16 +15,9 @@ class CreateRolePermissionsTable extends Migration
     {
         Schema::create('role_permissions', function (Blueprint $table) {
             $table->id();
-            $table->bigIncrements('role_id');
-            $table->bigIncrements('permission_id');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('role_id')->on('roles')
-                ->references('id')->onDelete('CASCADE');
-
-            $table->foreign('permission_id')->on('permissions')
-                ->references('id')->onDelete('CASCADE');
-
         });
     }
 

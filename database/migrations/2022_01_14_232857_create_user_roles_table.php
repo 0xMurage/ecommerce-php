@@ -15,14 +15,9 @@ class CreateUserRolesTable extends Migration
     {
         Schema::create('user_roles', function (Blueprint $table) {
             $table->id();
-            $table->bigIncrements('user_id');
-            $table->bigIncrements('role_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('user_id')->on('users')
-                ->references('id')->onDelete('CASCADE');
-            $table->foreign('role_id')->on('roles')
-                ->references('id')->onDelete('CASCADE');
 
             $table->unique(['user_id', 'role_id']); #avoid unnecessary duplication
         });

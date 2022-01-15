@@ -14,7 +14,7 @@ class CreateUserProductsTable extends Migration
     public function up()
     {
         Schema::create('user_products', function (Blueprint $table) {
-            $table->id();
+            https://laravel.com/docs/8.x/migrations#column-method-foreignId            $table->id();
             $table->string('name')->nullable(false);
             $table->text('description');
             $table->string('type');
@@ -23,10 +23,7 @@ class CreateUserProductsTable extends Migration
             $table->string('distributor');
             $table->double('quantity')->nullable(false);
             $table->double('unit_cost')->nullable(false);
-            $table->bigIncrements('user_id'); //owner
-
-            $table->foreign('user_id')->on('users')
-                ->references('id')->onDelete('CASCADE');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');; //owner
 
             $table->timestamps();
         });
