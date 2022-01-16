@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -107,16 +108,25 @@ class ProductController extends Controller
 
     }
 
-    public function search(Request $request)
+    public function search(Request $request, ProductService $productService)
     {
-
+        //validate the request
+        $this->validate($request, [
+            'name' => ['required_without_all:price', 'max:255'],
+            'price' => ['required_without_all:name', 'numeric']
+        ], ['name.required_without_all' => 'Product name to search missing',
+                'price.required_without_all' => 'Product price to search missing',]
+        );
         if (Auth::user()->cannot('view', Product::class)) {
             //if user has no "view all" products permissions, search only their products
-
+            $results = $productService->search($request->get('price'),
+                $request->get('name'), true);
         } else {
             //search all products
+            $results = $productService->search($request->get('price'), $request->get('name'));
         }
-
+        return response()
+            ->json(['message' => 'Filtered products', 'products' => $results]);
     }
 
 }
