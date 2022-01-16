@@ -18,3 +18,8 @@ $router->group(['namespace' => '\App\Http\Controllers\Auth', 'prefix' => 'api/v1
     $router->post('/register', 'RegisterController@store');
     $router->post('/login', 'LoginController@login');
 });
+
+$router->group(['prefix' => 'api/v1/users', 'middleware' => ['auth']], function () use ($router) {
+
+    $router->post('/new', 'UserAccountController@store');
+});
