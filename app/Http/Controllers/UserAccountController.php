@@ -133,7 +133,7 @@ class UserAccountController extends Controller
         $user->load('roles');
         return response()
             ->json(['message' => 'User details updated successfully.',
-                'user' => $user], 201);
+                'user' => $user]);
     }
 
     public function destroy($id)
@@ -146,6 +146,6 @@ class UserAccountController extends Controller
         $user->delete();
 
         return response()
-            ->json(['message' => 'User account deleted successfully.'], 201);
+            ->json(['message' => 'User account deleted successfully.']);
     }
 }

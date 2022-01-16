@@ -67,7 +67,7 @@ class UserAccountTest extends TestCase
             'email' => 'jeremiah@rwanda.com', 'role_id' => $role->id];
 
         $this->actingAs($impersonationUser)->put('/users/update/' . $account->id, $updateDetails)
-            ->seeStatusCode(201)
+            ->seeStatusCode(200)
             ->seeJson(['message' => 'User details updated successfully.']);
 
         $this->assertTrue($this->response['user']['first_name'] == $updateDetails['first_name']);
@@ -100,7 +100,7 @@ class UserAccountTest extends TestCase
         $account = User::orderBy('created_at')->first();
 
         $this->actingAs($impersonationUser)->delete('/users/delete/' . $account->id)
-            ->seeStatusCode(201)
+            ->seeStatusCode(200)
             ->seeJson(['message' => 'User account deleted successfully.']);
 
         $this->assertEmpty(User::find($account->id));

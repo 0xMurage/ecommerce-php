@@ -27,7 +27,7 @@ class RoleController extends Controller
 
 
         //validate the request data
-        $validated = $validated = $this->validate($request, [
+        $validated = $this->validate($request, [
             'name' => ['required', 'min:2', 'unique:roles,name', 'max:200'],
             'description' => ['sometimes', 'max:200'],
             'permissions' => ['required', 'array'],
@@ -64,7 +64,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
 
         //validate the request data
-        $validated = $validated = $this->validate($request, [
+        $validated = $this->validate($request, [
             'name' => ['sometimes', 'min:2', 'max:200',
                 Rule::unique('roles', 'name')->ignore($role)],
             'description' => ['sometimes', 'max:200'],
@@ -93,7 +93,7 @@ class RoleController extends Controller
 
         return response()
             ->json(['message' => 'Role updated successfully.',
-                'role' => $role], 200);
+                'role' => $role]);
     }
 
     public function destroy($id)
@@ -104,7 +104,7 @@ class RoleController extends Controller
             $role->delete();
 
             return response()
-                ->json(['message' => 'Role deleted successfully.'], 200);
+                ->json(['message' => 'Role deleted successfully.']);
         }
 
         return response()
