@@ -7,7 +7,6 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -21,16 +20,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
 
-    protected $fillable = ['first_name', 'last_name', 'phone_number', 'name', 'email', 'password'];
+    protected $fillable = ['first_name', 'last_name', 'phone_number', 'name', 'email', 'password', 'user_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'pivot'
-    ];
+    protected $hidden = ['password'];
 
     public function roles()
     {
@@ -58,10 +55,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return [
             'name' => $this->name(),
-            'roles' => $this->roles->map((function ($role) {
-                Arr::forget($role, 'pivot');
-                return $role;
-            }))
+            'roles' => $this->roles
         ];
     }
 }
