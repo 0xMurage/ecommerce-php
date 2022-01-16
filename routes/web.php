@@ -28,5 +28,6 @@ $router->group(['prefix' => 'api/v1/users', 'middleware' => ['auth']], function 
 
 $router->group(['prefix' => 'api/v1/roles', 'middleware' => ['auth']], function () use ($router) {
     $router->get('/show', 'RoleController@index');
+    $router->post('/new', 'RoleController@store');
 
 });
