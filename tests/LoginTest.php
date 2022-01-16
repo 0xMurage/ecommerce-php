@@ -6,7 +6,8 @@ class LoginTest extends TestCase
     {
         $user = \App\Models\User::first();
         $this->post('/login', ['email' => $user->email, 'password' => 'password'])
-            ->seeStatusCode(200);
+            ->seeStatusCode(200)
+            ->seeJsonStructure(['token', 'token_type', 'expires_in']);
     }
 
     public function testShouldErrWithInvalidData()
