@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class UserAccountController extends Controller
@@ -49,6 +48,8 @@ class UserAccountController extends Controller
         DB::beginTransaction();
         //save the user details
         unset($validated['role_id']);
+
+        $validated['user_id'] = Auth::id(); #attach the author
         $user = User::create($validated);
 
         //assign user the role
