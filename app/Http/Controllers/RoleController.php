@@ -19,7 +19,7 @@ class RoleController extends Controller
         $this->authorize('view', Role::class);
 
         return response()->json(["message" => "All roles",
-            'users' => Role::with('permissions:id,name,description')->get()]);
+            'roles' => Role::with('permissions:id,name,description')->get()]);
     }
 
 
