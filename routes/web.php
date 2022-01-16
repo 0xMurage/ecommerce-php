@@ -25,3 +25,8 @@ $router->group(['prefix' => 'api/v1/users', 'middleware' => ['auth']], function 
     $router->put('/update/{id}', 'UserAccountController@update');
     $router->delete('/delete/{id}', 'UserAccountController@destroy');
 });
+
+$router->group(['prefix' => 'api/v1/roles', 'middleware' => ['auth']], function () use ($router) {
+    $router->get('/show', 'RoleController@index');
+
+});
