@@ -14,9 +14,12 @@ class ProductController extends Controller
 
         if (Auth::user()->cannot('view', Product::class)) {
             //if user has no "view all" products permissions
-
+            return response()->json(["message" => "Your products",
+                'products' => Product::where('user_id', Auth::id())->get()]);
         } else {
 
+            return response()->json(["message" => "All products",
+                'products' => Product::all()]);
         }
     }
 
