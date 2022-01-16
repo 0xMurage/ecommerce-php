@@ -11,6 +11,6 @@ class Product extends Model
 
     public function author()
     {
-       return $this->belongsTo(User::class);
+       return $this->belongsTo(User::class,'user_id');
     }
 }
