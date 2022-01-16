@@ -126,4 +126,13 @@ class UserAccountController extends Controller
                 'user' => $user], 201);
     }
 
+    public function destroy($id)
+    {
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()
+            ->json(['message' => 'User account deleted successfully.'], 201);
+    }
 }

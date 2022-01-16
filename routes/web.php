@@ -22,6 +22,6 @@ $router->group(['namespace' => '\App\Http\Controllers\Auth', 'prefix' => 'api/v1
 $router->group(['prefix' => 'api/v1/users', 'middleware' => ['auth']], function () use ($router) {
     $router->get('/show', 'UserAccountController@index');
     $router->post('/new', 'UserAccountController@store');
-
     $router->put('/update/{id}', 'UserAccountController@update');
+    $router->delete('/delete/{id}', 'UserAccountController@destroy');
 });
