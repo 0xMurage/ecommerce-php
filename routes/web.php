@@ -16,4 +16,5 @@
 $router->group(['namespace' => '\App\Http\Controllers\Auth', 'prefix' => 'api/v1'], function () use ($router) {
 
     $router->post('/register', 'RegisterController@store');
+    $router->post('/login', 'LoginController@login');
 });
