@@ -17,12 +17,12 @@ class UserPolicy
         return $user->roles->pluck('permissions.*.name')->flatten()->contains('add_user');
     }
 
-    public function update(User $user, User $accountToUpdate)
+    public function update(User $user)
     {
         return $user->roles->pluck('permissions.*.name')->flatten()->contains('edit_user');
     }
 
-    public function delete(User $user, User $accountToDelete)
+    public function delete(User $user)
     {
         return $user->roles->pluck('permissions.*.name')->flatten()->contains('delete_user');
     }

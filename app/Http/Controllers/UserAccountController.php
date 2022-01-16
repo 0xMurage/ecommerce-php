@@ -31,7 +31,7 @@ class UserAccountController extends Controller
     public function index()
     {
         //check if user has correct permissions
-        $this->authorize('view');
+        $this->authorize('view', User::class);
 
         return response()->json(["message" => "All user accounts",
             'users' => User::with('roles')->get()]);
@@ -45,7 +45,7 @@ class UserAccountController extends Controller
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         //check if user has correct permissions
-        $this->authorize('create');
+        $this->authorize('create', User::class);
 
         #validate the request
         $validated = $this->validate($request, [
@@ -93,8 +93,8 @@ class UserAccountController extends Controller
 
     public function update(Request $request, $id)
     {
-        //check if user has correct permissions (no need for the user account to update)
-        $this->authorize('update', null);
+        //check if user has correct permissions
+        $this->authorize('update', User::class);
 
         //retrieve the user
         $user = User::findOrFail($id);
@@ -139,8 +139,8 @@ class UserAccountController extends Controller
     public function destroy($id)
     {
 
-        //check if user has correct permissions (no need for the user account to update)
-        $this->authorize('delete', null);
+        //check if user has correct permissions
+        $this->authorize('delete', User::class);
 
         $user = User::findOrFail($id);
         $user->delete();
