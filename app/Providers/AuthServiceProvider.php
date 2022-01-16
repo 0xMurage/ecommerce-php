@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -39,5 +41,6 @@ class AuthServiceProvider extends ServiceProvider
 
         // Define gates
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Role::class, RolePolicy::class);
     }
 }
