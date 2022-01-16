@@ -95,7 +95,23 @@ class RoleController extends Controller
 
         return response()
             ->json(['message' => 'Role updated successfully.',
-                'role' => $role], 201);
+                'role' => $role], 200);
+    }
+
+    public function destroy($id)
+    {
+        $this->authorize('delete', Role::class);
+        $role = Role::with('users')->findOrFail($id);
+        if ($role->users->count() == 0) {
+            $role->delete();
+
+            return response()
+                ->json(['message' => 'Role deleted successfully.'], 200);
+        }
+
+        return response()
+            ->json(['message' => 'Role cannot deleted while users are assigned the role'], 412);
+
     }
 
 }

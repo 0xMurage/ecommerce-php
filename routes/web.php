@@ -30,5 +30,6 @@ $router->group(['prefix' => 'api/v1/roles', 'middleware' => ['auth']], function 
     $router->get('/show', 'RoleController@index');
     $router->post('/new', 'RoleController@store');
     $router->put('/update/{id}', 'RoleController@update');
+    $router->delete('/delete/{id}', 'RoleController@destroy');
 
 });
