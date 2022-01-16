@@ -42,8 +42,7 @@ class ProductController extends Controller
             'unit_cost' => ['required', 'numeric', 'min:0']
         ]);
 
-        //create the role and then attach the permissions
-        DB::beginTransaction();
+        //save the product
         $product = new product();
         $product->name = $request->get('name');
         $product->description = $request->get('description');
@@ -55,7 +54,6 @@ class ProductController extends Controller
         $product->unit_cost = $request->get('unit_cost');
         $product->user_id = Auth::id();
         $product->save();
-        DB::commit();
 
         return response()
             ->json(['message' => 'Product created successfully.',
@@ -64,8 +62,37 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->authorize('edit', Product::class);
+        $this->authorize('update', Product::class);
 
+        $product = Product::findOrFail($id);
+
+        //validate the request data
+        $validated = $this->validate($request, [
+            'name' => ['sometimes', 'min:2', 'max:255'],
+            'description' => ['sometimes', 'max:200'],
+            'type' => ['sometimes', 'string', 'max:100'],
+            'category' => ['sometimes', 'string', 'max:100'],
+            'manufacturer' => ['sometimes', 'string', 'max:255'],
+            'distributor' => ['sometimes', 'string', 'max:255'],
+            'quantity' => ['sometimes', 'numeric', 'min:0'],
+            'unit_cost' => ['sometimes', 'numeric', 'min:0']
+        ]);
+
+        //update the product
+        $product->name = $request->get('name', $product->name);
+        $product->description = $request->get('description', $product->description);
+        $product->type = $request->get('type', $product->type);
+        $product->category = $request->get('category', $product->category);
+        $product->manufacturer = $request->get('manufacturer', $product->manufacturer);
+        $product->distributor = $request->get('distributor', $product->distributor);
+        $product->quantity = $request->get('quantity', $product->quantity);
+        $product->unit_cost = $request->get('unit_cost', $product->unit_cost);
+        $product->user_id = Auth::id();
+        $product->update();
+
+        return response()
+            ->json(['message' => 'Product updated successfully.',
+                'product' => $product]);
     }
 
     public function destroy($id)
