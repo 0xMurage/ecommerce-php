@@ -23,11 +23,21 @@ class UserAccountController extends Controller
     }
 
     /**
+     * Return all users.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return User::with('roles')->get();
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         #validate the request
         $validated = $this->validate($request, [
