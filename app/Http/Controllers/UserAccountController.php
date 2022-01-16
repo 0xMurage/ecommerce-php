@@ -26,11 +26,12 @@ class UserAccountController extends Controller
     /**
      * Return all users.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return User::with('roles')->get();
+        return response()->json(["message" => "All user accounts",
+            'users' => User::with('roles')->get()]);
     }
 
     /**
