@@ -30,6 +30,9 @@ class UserAccountController extends Controller
      */
     public function index()
     {
+        //check if user has correct permissions
+        $this->authorize('view');
+
         return response()->json(["message" => "All user accounts",
             'users' => User::with('roles')->get()]);
     }
@@ -41,6 +44,9 @@ class UserAccountController extends Controller
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        //check if user has correct permissions
+        $this->authorize('create');
+
         #validate the request
         $validated = $this->validate($request, [
             'first_name' => ['required', 'min:2', 'max:200'],
@@ -87,6 +93,9 @@ class UserAccountController extends Controller
 
     public function update(Request $request, $id)
     {
+        //check if user has correct permissions (no need for the user account to update)
+        $this->authorize('update', null);
+
         //retrieve the user
         $user = User::findOrFail($id);
 
@@ -129,6 +138,9 @@ class UserAccountController extends Controller
 
     public function destroy($id)
     {
+
+        //check if user has correct permissions (no need for the user account to update)
+        $this->authorize('delete', null);
 
         $user = User::findOrFail($id);
         $user->delete();
