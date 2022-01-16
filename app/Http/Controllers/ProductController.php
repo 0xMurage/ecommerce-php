@@ -99,6 +99,12 @@ class ProductController extends Controller
     {
         $this->authorize('delete', Product::class);
 
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return response()
+            ->json(['message' => 'Product deleted successfully.']);
+
     }
 
     public function search(Request $request)
