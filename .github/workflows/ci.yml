@@ -38,7 +38,6 @@ jobs:
       - name: Prepare Laravel Application
         run: |
           cp .env.example .env
-          php artisan key:generate
           php artisan jwt:secret
           sed -i "s|DB_PORT=3306|DB_PORT=${{ job.services.mysql.ports[3306] }}|" .env
           sed -i "s|DB_DATABASE=homestead|DB_DATABASE=${{secrets.CI_DATABASE_NAME}}|" .env
