@@ -11,9 +11,9 @@ servers:
         enum:
           - "https"
           - "http"
-        default: "http"
+        default: "https"
       domain:
-        default: "demos.mimidots.com/soko/docs"
+        default: "demos.mimidots.com/soko"
       basePath:
         default: "api/v1"
 tags:
