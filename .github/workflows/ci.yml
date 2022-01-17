@@ -35,8 +35,8 @@ jobs:
           mysql --host 127.0.0.1 --port ${{ CI_DB_PORT }} -u${{CI_DATABASE_USER}} -p${{CI_DB_PASSWORD}} -e "SHOW DATABASES"
 
       - uses: shivammathur/setup-php@v2
-          with:
-            php-version: '7.4'
+        with:
+          php-version: '7.4'
 
       - name: Install PHP dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
