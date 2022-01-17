@@ -33,7 +33,7 @@
         rsync_opts:
           - "--exclude-from={{local_path}}/.ansible/files/.rsync.ignore"
 
-    #Create storage folder structure if not exist
+    #Create storage folder structure if not exist (will be attached to container by docker compose)
     - name: "Create storage folder structure if not exist"
       ansible.builtin.file:
         path: "{{remote_path}}{{item}}"
@@ -79,14 +79,6 @@
       ansible.builtin.file:
         src: "{{project_remote.path}}/"
         dest: "{{remote_path}}/current"
-        state: link
-        force: yes
-
-    #link storage folder to current folder
-    - name: "Link storage folder to current folder"
-      ansible.builtin.file:
-        src: "{{remote_path}}/storage/"
-        dest: "{{remote_path}}/current/storage"
         state: link
         force: yes
 
