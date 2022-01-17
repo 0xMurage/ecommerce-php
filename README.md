@@ -1,6 +1,6 @@
 # Simple PHP E-commerce API
 
-API documentation available [here](https://mimidotsuser.github.io/ecommerce-php/)
+API documentation available [here](https://demos.mimidots.com/soko/docs/)
 
 ### Development setup
 
