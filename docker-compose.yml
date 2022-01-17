@@ -11,12 +11,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      - iprocure
+      - esoko
 
 networks:
-  iprocure:
-    name: ecommerce_api
+  esoko:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.0.10.0/29
+        - subnet: 172.0.0.24/29
