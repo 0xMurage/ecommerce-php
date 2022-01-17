@@ -1,0 +1,105 @@
+---
+- name: Upload all files to the remote servers
+  become: false
+  gather_facts: no
+  hosts: all
+
+  tasks:
+    - name: Generate timestamp for deployment use
+      ansible.builtin.shell:
+        cmd: echo $(date +%s)
+      register: global_timestamp
+
+    #create current deployment folder
+    - name: Create project deployment directory
+      ansible.builtin.file:
+        path: "{{remote_path}}/{{global_timestamp.stdout}}"
+        state: directory
+        mode: '0755'
+        follow: false
+        owner: "{{remote_files_owner_user}}"
+        group: "{{remote_files_owner_group}}"
+      register: project_remote
+
+    #upload the files
+    - name: "Upload project files"
+      ansible.posix.synchronize:
+        src: "{{local_path}}/"
+        dest: "{{project_remote.path}}"
+        recursive: yes
+        perms: no
+        group: no
+        owner: no
+        rsync_opts:
+          - "--exclude-from={{local_path}}/.ansible/files/.rsync.ignore"
+
+    #Create storage folder structure if not exist
+    - name: "Create storage folder structure if not exist"
+      ansible.builtin.file:
+        path: "{{remote_path}}{{item}}"
+        state: directory
+        mode: '0755'
+        follow: false
+        owner: "{{remote_files_owner_user}}"
+        group: "{{remote_files_owner_group}}"
+      loop:
+        - /storage/app/
+        - /storage/framework/cache/data/
+        - /storage/framework/sessions/
+        - /storage/framework/views/
+        - /storage/logs/
+
+    #Upload .env
+    - name: "Decrypt and upload environment var"
+      ansible.builtin.lineinfile:
+        line: "{{lookup('file',local_path+'/.env-enc')}}"
+        path: "{{project_remote.path}}/.env"
+        state: present
+        create: yes
+        mode: 0644
+        regexp: '^%DB_DATABASE='
+      no_log: True
+
+    # Stop any running docker services if available
+    - name: "Check if already running"
+      ansible.builtin.stat:
+        path: "{{remote_path}}/current"
+      register: project_current
+
+    - name: "Stop docker services if already running "
+      when: project_current.stat.exists
+      ansible.builtin.shell:
+        cmd: OID=$(id -u)  docker-compose down
+      args:
+        chdir: "{{remote_path}}/current"
+
+
+    #Set uploaded version as current
+    - name: "Link recent version to current folder"
+      ansible.builtin.file:
+        src: "{{project_remote.path}}/"
+        dest: "{{remote_path}}/current"
+        state: link
+        force: yes
+
+    #link storage folder to current folder
+    - name: "Link storage folder to current folder"
+      ansible.builtin.file:
+        src: "{{remote_path}}/storage/"
+        dest: "{{remote_path}}/current/storage"
+        state: link
+        force: yes
+
+    # Start docker services on current folder
+    - name: "Start project docker services"
+      ansible.builtin.shell:
+        cmd: OID=$(id -u) docker-compose -f docker-compose.yml up --build -d
+      args:
+        chdir: "{{remote_path}}/current"
+
+    ### POST CLEANUP
+    - name: "Clean up old versions of deployed "
+      ansible.builtin.shell:
+        cmd: "find -maxdepth 1 -mindepth 1 -type d ! -path './storage' |sort -n -r|tail -n +{{min|default('4')}} | xargs rm -rf"
+      args:
+        chdir: "{{remote_path}}"
