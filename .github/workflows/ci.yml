@@ -1,0 +1,55 @@
+---
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  checkout:
+    name: Run all tests
+    runs-on: ubuntu-20.04
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: ${{ CI_DATABASE_NAME }}
+          MYSQL_USER: ${{ CI_DATABASE_USER }}
+          MYSQL_PASSWORD: ${{ CI_DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ CI_DB_ROOT_PASSWORD }}
+        ports:
+          - CI_DB_PORT
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Verify MySQL connection
+        run: |
+          mysql --version
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 --port ${{ CI_DB_PORT }} -u${{CI_DATABASE_USER}} -p${{CI_DB_PASSWORD}} -e "SHOW DATABASES"
+
+      - uses: shivammathur/setup-php@v2
+          with:
+            php-version: '7.4'
+
+      - name: Install PHP dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan jwt:secret
+          sed -i "s|DB_PORT=3306|DB_PORT=${{ CI_DB_PORT }}|" .env
+          sed -i "s|DB_DATABASE=homestead|DB_DATABASE=${{ CI_DATABASE_NAME }}|" .env
+          sed -i "s|DB_USERNAME=homestead|DB_USERNAME=${{ CI_DATABASE_USER }}|" .env
+          sed -i "s|DB_PASSWORD=homestead|DB_PASSWORD=${{ CI_DB_PASSWORD }}|" .env
+
+      - name: Run tests
+        run: php vendor/bin/phpunit
