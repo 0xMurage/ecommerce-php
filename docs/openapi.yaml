@@ -13,7 +13,7 @@ servers:
           - "http"
         default: "http"
       domain:
-        default: "localhost"
+        default: "demos.mimidots.com/soko/docs"
       basePath:
         default: "api/v1"
 tags:
