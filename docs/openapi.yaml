@@ -1,0 +1,1147 @@
+---
+openapi: "3.0.0"
+info:
+  version: "1.0"
+  title: "E-Commerce REST API"
+  description: "REST API documentation for the E-Commerce project"
+servers:
+  - url: "{scheme}://localhost:{port}/{basePath}"
+    variables:
+      scheme:
+        enum:
+          - "https"
+          - "http"
+        default: "http"
+      port:
+        default: "80"
+      basePath:
+        default: "api/v1"
+tags:
+  - name: "register"
+  - name: "login"
+  - name: "roles"
+  - name: "users"
+  - name: "products"
+components:
+  schemas:
+    ErrorModel:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+  securitySchemes:
+    JWT:
+      description: "You can create a JSON Web Token (JWT) during auth.\nUsage format: `Bearer <JWT>`\n"
+      name: "Authorization"
+      type: "apiKey"
+      in: "header"
+paths:
+  /login:
+    post:
+      security: [ ]
+      tags:
+        - "login"
+      summary: "login"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+            example:
+              email: "ambrose23@example.org"
+              password: "password"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+                  token_type:
+                    type: "string"
+                  expires_in:
+                    type: "number"
+              example:
+                token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3RcL1wvYXBpXC92MVwvbG9naW4iLCJpYXQiOjE2NDIzNzQ2NjQsImV4cCI6MTY0MjM3ODI2NCwibmJmIjoxNjQyMzc0NjY0LCJqdGkiOiJqU0Y5Q2szb1ByZFJUQnBnIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3IiwibmFtZSI6Ikp1bGlhbmEgRGF1Z2hlcnR5Iiwicm9sZXMiOlt7ImlkIjoxLCJuYW1lIjoiQWRtaW4ifV19.sLYLuSCeLd9i3Bo07fsdgM0YPgEsLID_MMnGgFBOt9U"
+                token_type: "bearer"
+                expires_in: 3600
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /users/delete/{id}:
+    delete:
+      security:
+        - JWT: [ ]
+      tags:
+        - "users"
+      summary: "users"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "User account deleted successfully."
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /roles/new:
+    post:
+      security:
+        - JWT: [ ]
+      tags:
+        - "roles"
+      summary: "roles"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                description:
+                  type: "string"
+                permissions:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "number"
+                    required:
+                      - "id"
+            example:
+              name: " roledme"
+              description: "This si a demo role"
+              permissions:
+                - id: 4
+                - id: 2
+      responses:
+        422:
+          description: "Unprocessable Content"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  name:
+                    type: "array"
+                    items:
+                      type: "string"
+              example:
+                name:
+                  - "Role with similar name already exist"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /products/new:
+    post:
+      security:
+        - JWT: [ ]
+      tags:
+        - "products"
+      summary: "products"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                description:
+                  type: "string"
+                type:
+                  type: "string"
+                category:
+                  type: "string"
+                manufacturer:
+                  type: "string"
+                distributor:
+                  type: "string"
+                quantity:
+                  type: "number"
+                unit_cost:
+                  type: "number"
+            example:
+              name: "Test product"
+              description: "Demo product"
+              type: "test"
+              category: "cat 2"
+              manufacturer: "micro soft"
+              distributor: "Acceller"
+              quantity: 200
+              unit_cost: 0
+      responses:
+        422:
+          description: "Unprocessable Content"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  type:
+                    type: "array"
+                    items:
+                      type: "string"
+              example:
+                type:
+                  - "The type field is required."
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /users/show:
+    get:
+      security:
+        - JWT: [ ]
+      tags:
+        - "users"
+      summary: "users"
+      parameters: [ ]
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  users:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "number"
+                        first_name:
+                          type: "string"
+                        last_name:
+                          type: "string"
+                        phone_number:
+                          type: "string"
+                        email:
+                          type: "string"
+                        user_id:
+                          type: "string"
+                        created_at:
+                          type: "string"
+                        updated_at:
+                          type: "string"
+                        roles:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              id:
+                                type: "number"
+                              name:
+                                type: "string"
+                            required:
+                              - "id"
+                              - "name"
+                      required:
+                        - "id"
+                        - "first_name"
+                        - "last_name"
+                        - "phone_number"
+                        - "email"
+                        - "user_id"
+                        - "created_at"
+                        - "updated_at"
+                        - "roles"
+              example:
+                message: "All user accounts"
+                users:
+                  - id: 1
+                    first_name: "Reymundo"
+                    last_name: "Dickinson"
+                    phone_number: "+13807016560"
+                    email: "veum.clarabelle@example.org"
+                    user_id: null
+                    created_at: "2022-01-16T19:42:59.000000Z"
+                    updated_at: "2022-01-16T19:42:59.000000Z"
+                    roles:
+                      - id: 1
+                        name: "Admin"
+                  - id: 2
+                    first_name: "Bennett"
+                    last_name: "Rogahn"
+                    phone_number: "+17329298410"
+                    email: "shanna.schoen@example.com"
+                    user_id: null
+                    created_at: "2022-01-16T19:42:59.000000Z"
+                    updated_at: "2022-01-16T19:42:59.000000Z"
+                    roles:
+                      - id: 2
+                        name: "Customer"
+                  - id: 4
+                    first_name: "Chanel"
+                    last_name: "Wilderman"
+                    phone_number: "+18028613784"
+                    email: "lklocko@example.net"
+                    user_id: null
+                    created_at: "2022-01-16T19:42:59.000000Z"
+                    updated_at: "2022-01-16T19:42:59.000000Z"
+                    roles:
+                      - id: 1
+                        name: "Admin"
+                      - id: 2
+                        name: "Customer"
+                      - id: 3
+                        name: "Substance Abuse Social Worker"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /roles/show:
+    get:
+      security:
+        - JWT: [ ]
+      tags:
+        - "roles"
+      summary: "roles"
+      parameters: [ ]
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  users:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "number"
+                        name:
+                          type: "string"
+                        description:
+                          type: "string"
+                        created_at:
+                          type: "string"
+                        updated_at:
+                          type: "string"
+                        permissions:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              id:
+                                type: "number"
+                              name:
+                                type: "string"
+                              description:
+                                type: "string"
+                            required:
+                              - "id"
+                              - "name"
+                              - "description"
+                      required:
+                        - "id"
+                        - "name"
+                        - "description"
+                        - "created_at"
+                        - "updated_at"
+                        - "permissions"
+              example:
+                message: "All roles"
+                users:
+                  - id: 1
+                    name: "Admin"
+                    description: "Default account administrator"
+                    created_at: "2022-01-16T20:01:22.000000Z"
+                    updated_at: "2022-01-16T20:01:22.000000Z"
+                    permissions:
+                      - id: 1
+                        name: "add_user"
+                        description: "Can create a user account"
+                      - id: 2
+                        name: "edit_user"
+                        description: "Can edit user details"
+                      - id: 3
+                        name: "view_user"
+                        description: "Can view all users"
+                      - id: 4
+                        name: "delete_user"
+                        description: "Can delete user account"
+                      - id: 5
+                        name: "add_role"
+                        description: "Can create a role"
+                      - id: 6
+                        name: "edit_role"
+                        description: "Can edit role details"
+                      - id: 7
+                        name: "view_role"
+                        description: "Can view all roles"
+                      - id: 8
+                        name: "delete_role"
+                        description: "Can delete a role"
+                      - id: 9
+                        name: "add_product"
+                        description: "Can create a product"
+                      - id: 10
+                        name: "edit_product"
+                        description: "Can edit product details"
+                      - id: 11
+                        name: "view_product"
+                        description: "Can view all products"
+                      - id: 12
+                        name: "delete_product"
+                        description: "Can delete a product"
+                  - id: 2
+                    name: "Customer"
+                    description: "Default customer role"
+                    created_at: "2022-01-16T20:01:22.000000Z"
+                    updated_at: "2022-01-16T20:01:22.000000Z"
+                    permissions:
+                      - id: 9
+                        name: "add_product"
+                        description: "Can create a product"
+                  - id: 3
+                    name: "Agricultural Crop Worker"
+                    description: "Aspernatur odio nemo harum illum eius iure quo."
+                    created_at: "2022-01-16T20:01:22.000000Z"
+                    updated_at: "2022-01-16T20:01:22.000000Z"
+                    permissions:
+                      - id: 1
+                        name: "add_user"
+                        description: "Can create a user account"
+                      - id: 4
+                        name: "delete_user"
+                        description: "Can delete user account"
+                      - id: 12
+                        name: "delete_product"
+                        description: "Can delete a product"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /products/show:
+    get:
+      security:
+        - JWT: [ ]
+      tags:
+        - "products"
+      summary: "products"
+      parameters: [ ]
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  products:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "number"
+                        name:
+                          type: "string"
+                        description:
+                          type: "string"
+                        type:
+                          type: "string"
+                        category:
+                          type: "string"
+                        manufacturer:
+                          type: "string"
+                        distributor:
+                          type: "string"
+                        quantity:
+                          type: "number"
+                        unit_cost:
+                          type: "number"
+                        user_id:
+                          type: "number"
+                        created_at:
+                          type: "string"
+                        updated_at:
+                          type: "string"
+                        author:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "number"
+                            first_name:
+                              type: "string"
+                            last_name:
+                              type: "string"
+                      required:
+                        - "id"
+                        - "name"
+                        - "description"
+                        - "type"
+                        - "category"
+                        - "manufacturer"
+                        - "distributor"
+                        - "quantity"
+                        - "unit_cost"
+                        - "user_id"
+                        - "created_at"
+                        - "updated_at"
+                        - "author"
+              example:
+                message: "All products"
+                products:
+                  - id: 1
+                    name: "Product-67167-itkmo"
+                    description: "On various pretexts they all cheered. Alice thought over all the rest, Between."
+                    type: "fugiat"
+                    category: "Kitchen Appliances"
+                    manufacturer: "Thompson-Ernser"
+                    distributor: "Thiel-Kiehn"
+                    quantity: 246
+                    unit_cost: 940
+                    user_id: 10
+                    created_at: "2022-01-16T22:08:54.000000Z"
+                    updated_at: "2022-01-16T22:08:54.000000Z"
+                    author:
+                      id: 10
+                      first_name: "Caterina"
+                      last_name: "Dickens"
+                  - id: 2
+                    name: "Product-79894-zdjjv"
+                    description: "Alice: '--where's the Duchess?' 'Hush! Hush!' said the Mouse to Alice."
+                    type: "architecto"
+                    category: "Kitchen Appliances"
+                    manufacturer: "Turcotte, Robel and Treutel"
+                    distributor: "Carter, Corkery and McGlynn"
+                    quantity: 83
+                    unit_cost: 3080
+                    user_id: 9
+                    created_at: "2022-01-16T22:08:54.000000Z"
+                    updated_at: "2022-01-16T22:08:54.000000Z"
+                    author:
+                      id: 9
+                      first_name: "Matilde"
+                      last_name: "Larkin"
+                  - id: 3
+                    name: "Product-03489-iljtx"
+                    description: "CHAPTER III. A Caucus-Race and a large piece out of this sort in her pocket)."
+                    type: "at"
+                    category: "Properties"
+                    manufacturer: "Green Inc"
+                    distributor: "Price and Sons"
+                    quantity: 179
+                    unit_cost: 3210
+                    user_id: 9
+                    created_at: "2022-01-16T22:08:54.000000Z"
+                    updated_at: "2022-01-16T22:08:54.000000Z"
+                    author:
+                      id: 9
+                      first_name: "Matilde"
+                      last_name: "Larkin"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /users/update/{id}:
+    put:
+      security:
+        - JWT: [ ]
+      tags:
+        - "users"
+      summary: "users"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                first_name:
+                  type: "string"
+                last_name:
+                  type: "string"
+                email:
+                  type: "string"
+                phone_number:
+                  type: "string"
+                role_id:
+                  type: "number"
+            example:
+              first_name: "Koi"
+              last_name: "Methu"
+              email: "demo@demo.com"
+              phone_number: "0704413577"
+              role_id: 2
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  user:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "number"
+                      first_name:
+                        type: "string"
+                      last_name:
+                        type: "string"
+                      phone_number:
+                        type: "string"
+                      email:
+                        type: "string"
+                      user_id:
+                        type: "number"
+                      created_at:
+                        type: "string"
+                      updated_at:
+                        type: "string"
+                      roles:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "number"
+                            name:
+                              type: "string"
+              example:
+                message: "User details updated successfully."
+                user:
+                  id: 6
+                  first_name: "Koi"
+                  last_name: "Methu"
+                  phone_number: "0704413577"
+                  email: "demo@demo.com"
+                  user_id: 1
+                  created_at: "2022-01-16T19:42:59.000000Z"
+                  updated_at: "2022-01-16T19:43:54.000000Z"
+                  roles:
+                    - id: 2
+                      name: "Customer"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /roles/update/{id}:
+    put:
+      security:
+        - JWT: [ ]
+      tags:
+        - "roles"
+      summary: "roles"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                permissions:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "number"
+                    required:
+                      - "id"
+            example:
+              name: "Deo"
+              permissions:
+                - id: 5
+                - id: 6
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  role:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "number"
+                      name:
+                        type: "string"
+                      description:
+                        type: "string"
+                      created_at:
+                        type: "string"
+                      updated_at:
+                        type: "string"
+                      permissions:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "number"
+                            name:
+                              type: "string"
+                            description:
+                              type: "string"
+                            created_at:
+                              type: "string"
+                            updated_at:
+                              type: "string"
+                          required:
+                            - "id"
+                            - "name"
+                            - "description"
+                            - "created_at"
+                            - "updated_at"
+              example:
+                message: "Role updated successfully."
+                role:
+                  id: 4
+                  name: "Deo"
+                  description: "Iste iste atque inventore qui."
+                  created_at: "2022-01-16T20:01:22.000000Z"
+                  updated_at: "2022-01-16T20:35:41.000000Z"
+                  permissions:
+                    - id: 5
+                      name: "add_role"
+                      description: "Can create a role"
+                      created_at: null
+                      updated_at: null
+                    - id: 6
+                      name: "edit_role"
+                      description: "Can edit role details"
+                      created_at: null
+                      updated_at: null
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /products/update/{id}:
+    put:
+      security:
+        - JWT: [ ]
+      tags:
+        - "products"
+      summary: "products"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                quantity:
+                  type: "number"
+                unit_cost:
+                  type: "number"
+            example:
+              quantity: 100
+              unit_cost: 45
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  product:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "number"
+                      name:
+                        type: "string"
+                      description:
+                        type: "string"
+                      type:
+                        type: "string"
+                      category:
+                        type: "string"
+                      manufacturer:
+                        type: "string"
+                      distributor:
+                        type: "string"
+                      quantity:
+                        type: "number"
+                      unit_cost:
+                        type: "number"
+                      user_id:
+                        type: "number"
+                      created_at:
+                        type: "string"
+                      updated_at:
+                        type: "string"
+              example:
+                message: "Product updated successfully."
+                product:
+                  id: 4
+                  name: "Product-82847-jgfze"
+                  description: "Alice knew it was done. They had a consultation about this, and Alice looked."
+                  type: "excepturi"
+                  category: "Health & Beauty"
+                  manufacturer: "Feest PLC"
+                  distributor: "Nitzsche PLC"
+                  quantity: 100
+                  unit_cost: 45
+                  user_id: 1
+                  created_at: "2022-01-16T22:08:54.000000Z"
+                  updated_at: "2022-01-16T22:20:54.000000Z"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /products/delete/{id}:
+    delete:
+      security:
+        - JWT: [ ]
+      tags:
+        - "products"
+      summary: "products"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "Product deleted successfully."
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /products/search:
+    post:
+      security:
+        - JWT: [ ]
+      tags:
+        - "products"
+      summary: "products"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                price:
+                  type: "string"
+                name:
+                  type: "string"
+            example:
+              price: "100"
+              name: "Product-80594-gwuht"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  products:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "number"
+                        name:
+                          type: "string"
+                        description:
+                          type: "string"
+                        type:
+                          type: "string"
+                        category:
+                          type: "string"
+                        manufacturer:
+                          type: "string"
+                        distributor:
+                          type: "string"
+                        quantity:
+                          type: "number"
+                        unit_cost:
+                          type: "number"
+                        user_id:
+                          type: "number"
+                        created_at:
+                          type: "string"
+                        updated_at:
+                          type: "string"
+                      required:
+                        - "id"
+                        - "name"
+                        - "description"
+                        - "type"
+                        - "category"
+                        - "manufacturer"
+                        - "distributor"
+                        - "quantity"
+                        - "unit_cost"
+                        - "user_id"
+                        - "created_at"
+                        - "updated_at"
+              example:
+                message: "Filtered products"
+                products:
+                  - id: 6
+                    name: "Product-80594-gwuht"
+                    description: "IS a long time together.' 'Which is just the case with MINE,' said the White."
+                    type: "quasi"
+                    category: "Fashion"
+                    manufacturer: "Ledner, Osinski and Tillman"
+                    distributor: "Beer and Sons"
+                    quantity: 32
+                    unit_cost: 2927
+                    user_id: 4
+                    created_at: "2022-01-16T22:08:54.000000Z"
+                    updated_at: "2022-01-16T22:08:54.000000Z"
+                  - id: 8
+                    name: "Product-15740-mdkfb"
+                    description: "Queen?' said the Rabbit just under the sea--' ('I haven't,' said Alice)--'and."
+                    type: "recusandae"
+                    category: "Health & Beauty"
+                    manufacturer: "Berge, Rosenbaum and Adams"
+                    distributor: "Murphy Ltd"
+                    quantity: 10
+                    unit_cost: 10
+                    user_id: 2
+                    created_at: "2022-01-16T22:08:54.000000Z"
+                    updated_at: "2022-01-16T22:08:54.000000Z"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /users/new:
+    post:
+      security:
+        - JWT: [ ]
+      tags:
+        - "users"
+      summary: "users"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                first_name:
+                  type: "string"
+                email:
+                  type: "string"
+                phone_number:
+                  type: "string"
+                role_id:
+                  type: "number"
+            example:
+              first_name: "James"
+              email: "demo@demo.co"
+              phone_number: "254704413577"
+              role_id: 1
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                  user:
+                    type: "object"
+                    properties:
+                      first_name:
+                        type: "string"
+                      phone_number:
+                        type: "string"
+                      email:
+                        type: "string"
+                      user_id:
+                        type: "number"
+                      updated_at:
+                        type: "string"
+                      created_at:
+                        type: "string"
+                      id:
+                        type: "number"
+                      roles:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "number"
+                            name:
+                              type: "string"
+              example:
+                message: "Account created successfully."
+                user:
+                  first_name: "James"
+                  phone_number: "254704413577"
+                  email: "demo@demo.co"
+                  user_id: 1
+                  updated_at: "2022-01-16T19:43:51.000000Z"
+                  created_at: "2022-01-16T19:43:51.000000Z"
+                  id: 11
+                  roles:
+                    - id: 1
+                      name: "Admin"
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
+  /register:
+    post:
+      security: [ ]
+      tags:
+        - "register"
+      summary: "register"
+      parameters: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                first_name:
+                  type: "string"
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+                phone_number:
+                  type: "string"
+            example:
+              first_name: "Demo"
+              email: "john@rwanda.com"
+              password: "password"
+              phone_number: "254704413577"
+      responses:
+        422:
+          description: "Unprocessable Content"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  email:
+                    type: "array"
+                    items:
+                      type: "string"
+              example:
+                email:
+                  - "The email has already been taken."
+        default:
+          description: "Unexpected error"
+          content:
+            application/json:
+              example:
+                message: "Sorry unable to perform operation."
