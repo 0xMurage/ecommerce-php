@@ -42,7 +42,7 @@ jobs:
           sed -i "s|DB_PORT=3306|DB_PORT=${{ job.services.mysql.ports[3306] }}|" .env
           sed -i "s|DB_DATABASE=homestead|DB_DATABASE=${{secrets.CI_DATABASE_NAME}}|" .env
           sed -i "s|DB_USERNAME=homestead|DB_USERNAME=${{secrets.CI_DATABASE_USER}}|" .env
-          sed -i "s|DB_PASSWORD=homestead|DB_PASSWORD=${{secrets.CI_DB_PASSWORD}}|" .env
+          sed -i "s|DB_PASSWORD=secret|DB_PASSWORD=${{secrets.CI_DB_PASSWORD}}|" .env
 
       - name: Run tests
         run: php vendor/bin/phpunit
