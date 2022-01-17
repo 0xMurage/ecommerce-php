@@ -5,15 +5,15 @@ info:
   title: "E-Commerce REST API"
   description: "REST API documentation for the E-Commerce project"
 servers:
-  - url: "{scheme}://localhost:{port}/{basePath}"
+  - url: "{scheme}://{domain}/{basePath}"
     variables:
       scheme:
         enum:
           - "https"
           - "http"
         default: "http"
-      port:
-        default: "80"
+      domain:
+        default: "localhost"
       basePath:
         default: "api/v1"
 tags:

@@ -1,24 +1,29 @@
-# Lumen PHP Framework
+# Simple PHP E-commerce API
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://img.shields.io/packagist/l/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
+API documentation available [here](https://mimidotsuser.github.io/ecommerce-php/)
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+### Development setup
 
-## Official Documentation
+#### Prerequisites
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+- MySQL compatible database server
+- PHP 7.4+
+- [Composer](https://getcomposer.org/)
+- GIT
 
-## Contributing
+##### How to set up
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1) Clone the project `git clone https://github.com/mimidotsuser/ecommerce-php.git`
+2) Install the dependencies `composer install`
+3) Copy `.env-example` to `.env` `cp .env-example .env`
+4) Generate JWT secret key   `php artisan jwt:secret`
+5) Update the database credentials on the `.env` file.
+6) Run database migrations `php artisan migrate`
+7) Seed the database with dummy data `php artisan db:seed`
+8) Run the server `php -S localhost:80 -t public`
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+**Note**: If you want to use Docker, ensure you have [docker compose](https://docs.docker.com/compose/) installed.
 
 ## License
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
