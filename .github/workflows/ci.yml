@@ -16,12 +16,12 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: ${{ secrets.CI_DATABASE_NAME }}
-          MYSQL_USER: ${{ secrets.CI_DATABASE_USER }}
-          MYSQL_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.CI_DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{secrets.CI_DATABASE_NAME}}
+          MYSQL_USER: ${{secrets.CI_DATABASE_USER}}
+          MYSQL_PASSWORD: ${{secrets.CI_DB_PASSWORD}}
+          MYSQL_ROOT_PASSWORD: ${{secrets.CI_DB_ROOT_PASSWORD}}
         ports:
-          - ${{ secrets.CI_DB_PORT }}
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: |
           mysql --version
           sudo apt-get install -y mysql-client
-          mysql --host 127.0.0.1 --port ${{ secrets.CI_DB_PORT }} -u${{secrets.CI_DATABASE_USER}} -p${{secrets.CI_DB_PASSWORD}} -e "SHOW DATABASES"
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports[3306] }} -u${{secrets.CI_DATABASE_USER}} -p${{secrets.CI_DB_PASSWORD}} -e "SHOW DATABASES"
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -46,10 +46,10 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           php artisan jwt:secret
-          sed -i "s|DB_PORT=3306|DB_PORT=${{ secrets.CI_DB_PORT }}|" .env
-          sed -i "s|DB_DATABASE=homestead|DB_DATABASE=${{ secrets.CI_DATABASE_NAME }}|" .env
-          sed -i "s|DB_USERNAME=homestead|DB_USERNAME=${{ secrets.CI_DATABASE_USER }}|" .env
-          sed -i "s|DB_PASSWORD=homestead|DB_PASSWORD=${{ secrets.CI_DB_PASSWORD }}|" .env
+          sed -i "s|DB_PORT=3306|DB_PORT=${{ job.services.mysql.ports[3306] }}|" .env
+          sed -i "s|DB_DATABASE=homestead|DB_DATABASE=${{secrets.CI_DATABASE_NAME}}|" .env
+          sed -i "s|DB_USERNAME=homestead|DB_USERNAME=${{secrets.CI_DATABASE_USER}}|" .env
+          sed -i "s|DB_PASSWORD=homestead|DB_PASSWORD=${{secrets.CI_DB_PASSWORD}}|" .env
 
       - name: Run tests
         run: php vendor/bin/phpunit
