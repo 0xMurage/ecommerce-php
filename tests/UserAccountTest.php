@@ -97,7 +97,9 @@ class UserAccountTest extends TestCase
         })->firstOrFail();
 
         //get a random account to delete
-        $account = User::orderBy('created_at')->first();
+        $account = User::whereDoesntHave('roles',function($query){
+            return $query->where('name', 'admin');
+        })->first();
 
         $this->actingAs($impersonationUser)->delete('/users/delete/' . $account->id)
             ->seeStatusCode(200)
