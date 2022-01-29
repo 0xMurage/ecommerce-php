@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: mimidots/php7.4:1.0.0-alpine
+    image: ${PHP_IMAGE:-mimidots/php7.4:1.0.4}
     volumes:
       - $PWD:/var/www/html
       - ${HOST_STORAGE_PATH:-./storage}:/var/www/html/storage
