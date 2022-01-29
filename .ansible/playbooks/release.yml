@@ -42,6 +42,7 @@
         follow: false
         owner: "{{remote_files_owner_user}}"
         group: "{{remote_files_owner_group}}"
+      ignore_errors: true
       loop:
         - /storage/app/
         - /storage/framework/cache/data/
