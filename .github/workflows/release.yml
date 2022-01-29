@@ -1,12 +1,14 @@
 ---
 name: Release
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: [ 'ci' ]
+    types: [ 'completed' ]
+    branches: [ 'master' ]
 
 jobs:
   checkout:
+    if: github.event.workflow_run.conclusion == 'success'
     name: Checkout and release
     runs-on: ubuntu-20.04
     steps:
@@ -18,7 +20,7 @@ jobs:
           php-version: '7.4'
 
       - name: Install PHP dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
 
       - name: Create folder to hold configuration
         run: sudo mkdir -p /home/ansible-temp
